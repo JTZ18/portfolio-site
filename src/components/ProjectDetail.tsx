@@ -5,6 +5,7 @@ import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import { motion } from 'framer-motion';
 import type { Project } from '@/types/project';
 import { cn } from '@/lib/utils';
+import { HeroPill } from '@/components/ui/hero-pill';
 
 type ProjectDetailProps = {
   project: Project;
@@ -91,22 +92,19 @@ const ProjectDetail = ({ project }: ProjectDetailProps) => {
             role="list"
           >
             {techStack.map((tech, index) => (
-              <motion.span
+              <motion.div
                 key={index}
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.5 + (index * 0.1) }}
                 whileHover={{ scale: 1.05 }}
-                role="listitem"
-                className={cn(
-                  "px-3 py-1 text-sm rounded-full",
-                  "bg-muted text-muted-foreground",
-                  "border border-border/40",
-                  "backdrop-blur-sm"
-                )}
               >
-                {tech}
-              </motion.span>
+                <HeroPill
+                  text={tech}
+                  className="mb-0"
+                  animate={false}
+                />
+              </motion.div>
             ))}
           </motion.div>
         </motion.header>

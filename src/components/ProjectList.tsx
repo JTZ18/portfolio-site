@@ -8,10 +8,36 @@ type ProjectListProps = {
   projects: Project[];
 };
 
+const MONTHS = {
+  'January': 0,
+  'February': 1,
+  'March': 2,
+  'April': 3,
+  'May': 4,
+  'June': 5,
+  'July': 6,
+  'August': 7,
+  'September': 8,
+  'October': 9,
+  'November': 10,
+  'December': 11
+};
+
 const ProjectList = ({ projects }: ProjectListProps) => {
   // Sort projects by date (most recent first)
   const sortedProjects = [...projects].sort((a, b) => {
-    return new Date(b.date).getTime() - new Date(a.date).getTime();
+    try {
+      const [aMonth, aYear] = a.date.split(' ');
+      const [bMonth, bYear] = b.date.split(' ');
+
+      const aDate = new Date(parseInt(aYear), MONTHS[aMonth as keyof typeof MONTHS]);
+      const bDate = new Date(parseInt(bYear), MONTHS[bMonth as keyof typeof MONTHS]);
+
+      return bDate.getTime() - aDate.getTime();
+    } catch (error) {
+      console.error('Error sorting dates:', error);
+      return 0;
+    }
   });
 
   return (

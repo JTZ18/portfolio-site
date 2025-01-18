@@ -4,7 +4,7 @@ import { ChevronRightIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import type { Project } from '@/types/project';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { PatternCard, PatternCardBody } from "@/components/ui/card-with-ellipsis-pattern";
 import { HeroPill } from '@/components/ui/hero-pill';
@@ -14,12 +14,42 @@ type ProjectCardProps = {
   index: number;
 };
 
-const MAX_TAG_LENGTH = 30; // Maximum length for tech stack tags on mobile
+const MAX_TAG_LENGTH = 30;
+
+const MONTHS = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'
+];
 
 const ProjectCard = ({ project }: ProjectCardProps) => {
   const { id, title, date, overview, techStack } = project;
   const cardRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [formattedDate, setFormattedDate] = useState<string>('');
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (date) {
+      try {
+        // The date is already in "Month Year" format from markdown
+        // Just need to validate it's correct
+        const [month, year] = date.split(' ');
+        if (month && year && MONTHS.includes(month)) {
+          setFormattedDate(date);
+          return;
+        }
+
+        setFormattedDate('Date unavailable');
+      } catch (error) {
+        console.error('Error formatting date:', error);
+        setFormattedDate('Date unavailable');
+      }
+    }
+  }, [date]);
 
   const { scrollYProgress } = useScroll({
     target: cardRef,
@@ -30,16 +60,27 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
   const opacity = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0.3, 1, 1, 0.3]);
   const scale = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0.95, 1, 1, 0.95]);
 
-  // Format date to "Month Year"
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-  };
-
   // Truncate long tech stack tags
   const truncateTag = (tag: string) => {
     return tag.length > MAX_TAG_LENGTH ? `${tag.slice(0, MAX_TAG_LENGTH)}...` : tag;
   };
+
+  if (!mounted) {
+    return (
+      <div className="w-full">
+        <PatternCard>
+          <PatternCardBody>
+            <div className="animate-pulse">
+              <div className="h-6 bg-muted rounded w-3/4 mb-3"></div>
+              <div className="h-4 bg-muted rounded w-1/4 mb-4"></div>
+              <div className="h-4 bg-muted rounded w-full mb-2"></div>
+              <div className="h-4 bg-muted rounded w-3/4"></div>
+            </div>
+          </PatternCardBody>
+        </PatternCard>
+      </div>
+    );
+  }
 
   return (
     <motion.div
@@ -103,7 +144,7 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
                   dateTime={date}
                   className="text-sm text-muted-foreground mb-4 block"
                 >
-                  {formatDate(date)}
+                  {formattedDate}
                 </time>
 
                 <p className={cn(
