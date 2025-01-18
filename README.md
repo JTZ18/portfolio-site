@@ -51,6 +51,34 @@ pnpm dev
 
 4. Open [http://localhost:3000](http://localhost:3000) in your browser to see the result.
 
+## Deployment
+
+### Deploy on Vercel (Recommended)
+
+The easiest way to deploy this portfolio is to use the [Vercel Platform](https://vercel.com).
+
+1. Push your code to a GitHub repository.
+2. Go to [Vercel](https://vercel.com/new) and sign up with GitHub.
+3. Click "Import Project" and select your repository.
+4. Vercel will automatically detect Next.js and configure the build settings.
+5. Click "Deploy" and wait for your site to be deployed.
+
+Your site will be automatically deployed on every push to the main branch.
+
+#### Environment Variables
+
+If you've added any environment variables to your project:
+1. Go to your project settings in Vercel
+2. Navigate to the "Environment Variables" tab
+3. Add each variable from your `.env` file
+
+### Custom Domain (Optional)
+
+1. Go to your project settings in Vercel
+2. Navigate to the "Domains" tab
+3. Add your custom domain
+4. Follow Vercel's instructions to configure your DNS settings
+
 ## Project Structure
 
 ```
