@@ -14,6 +14,8 @@ type ProjectCardProps = {
   index: number;
 };
 
+const MAX_TAG_LENGTH = 30; // Maximum length for tech stack tags on mobile
+
 const ProjectCard = ({ project }: ProjectCardProps) => {
   const { id, title, date, overview, techStack } = project;
   const cardRef = useRef<HTMLDivElement>(null);
@@ -32,6 +34,11 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  };
+
+  // Truncate long tech stack tags
+  const truncateTag = (tag: string) => {
+    return tag.length > MAX_TAG_LENGTH ? `${tag.slice(0, MAX_TAG_LENGTH)}...` : tag;
   };
 
   return (
@@ -113,8 +120,17 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
                   {techStack.slice(0, 5).map((tech, techIndex) => (
                     <HeroPill
                       key={techIndex}
+                      text={truncateTag(tech)}
+                      className="mb-0 !p-0 sm:hidden"
+                      animate={false}
+                      role="listitem"
+                    />
+                  ))}
+                  {techStack.slice(0, 5).map((tech, techIndex) => (
+                    <HeroPill
+                      key={techIndex}
                       text={tech}
-                      className="mb-0 !p-0"
+                      className="mb-0 !p-0 hidden sm:inline-flex"
                       animate={false}
                       role="listitem"
                     />

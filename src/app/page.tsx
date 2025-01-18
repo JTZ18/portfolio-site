@@ -31,7 +31,7 @@ const Home = () => {
                   )}
                   duration={1}
                   speed={0.05}
-                  delay={2.5}
+                  delay={3}
                 >
                   Jon Taylor
                 </TextScramble>
