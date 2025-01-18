@@ -45,7 +45,7 @@ const Home = () => {
                   size={150}
                   duration={15}
                   delay={0}
-                  colorFrom="#FC7718"
+                  colorFrom="#FFA500"
                   colorTo="#AE48FF"
                   borderWidth={2}
                 />
