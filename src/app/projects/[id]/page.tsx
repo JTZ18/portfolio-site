@@ -1,11 +1,19 @@
 import { getProjectsData } from '@/lib/markdownParser';
 import { notFound } from 'next/navigation';
 import ProjectDetail from '@/components/ProjectDetail';
+import { Metadata } from 'next';
 
 type Props = {
   params: Promise<{
     id: string;
   }>;
+};
+
+export const metadata: Metadata = {
+  title: 'Project Details',
+  alternates: {
+    canonical: '/projects'
+  }
 };
 
 export async function generateStaticParams() {

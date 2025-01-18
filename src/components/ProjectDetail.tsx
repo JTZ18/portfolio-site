@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import { motion } from 'framer-motion';
 import type { Project } from '@/types/project';
+import { cn } from '@/lib/utils';
 
 type ProjectDetailProps = {
   project: Project;
@@ -31,7 +32,7 @@ const ProjectDetail = ({ project }: ProjectDetailProps) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800"
+      className="min-h-screen bg-background"
     >
       <div className="max-w-4xl mx-auto px-4 py-12">
         <motion.nav
@@ -41,8 +42,12 @@ const ProjectDetail = ({ project }: ProjectDetailProps) => {
           className="mb-8"
         >
           <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors duration-200"
+            href="/projects"
+            className={cn(
+              "inline-flex items-center gap-2 text-sm",
+              "text-muted-foreground hover:text-primary",
+              "transition-colors duration-200"
+            )}
             aria-label="Back to projects"
           >
             <motion.div whileHover={{ x: -4 }} transition={{ duration: 0.2 }}>
@@ -63,7 +68,7 @@ const ProjectDetail = ({ project }: ProjectDetailProps) => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="text-3xl font-medium text-gray-800 dark:text-gray-100"
+              className="text-3xl font-medium text-foreground"
             >
               {title}
             </motion.h1>
@@ -72,7 +77,7 @@ const ProjectDetail = ({ project }: ProjectDetailProps) => {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4 }}
               dateTime={date}
-              className="text-sm text-gray-500 dark:text-gray-400"
+              className="text-sm text-muted-foreground"
             >
               {date}
             </motion.time>
@@ -93,7 +98,12 @@ const ProjectDetail = ({ project }: ProjectDetailProps) => {
                 transition={{ delay: 0.5 + (index * 0.1) }}
                 whileHover={{ scale: 1.05 }}
                 role="listitem"
-                className="px-3 py-1 bg-gray-100/50 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 rounded-full text-sm border border-gray-200/50 dark:border-gray-600/50 backdrop-blur-sm"
+                className={cn(
+                  "px-3 py-1 text-sm rounded-full",
+                  "bg-muted text-muted-foreground",
+                  "border border-border/40",
+                  "backdrop-blur-sm"
+                )}
               >
                 {tech}
               </motion.span>
@@ -116,7 +126,7 @@ const ProjectDetail = ({ project }: ProjectDetailProps) => {
               transition={{ delay: sectionIndex * 0.1 }}
               className="scroll-mt-16"
             >
-              <h2 className="text-xl font-medium text-gray-800 dark:text-gray-100 mb-4">
+              <h2 className="text-xl font-medium text-foreground mb-4">
                 {section.title}
               </h2>
               {Array.isArray(section.content) ? (
@@ -128,7 +138,7 @@ const ProjectDetail = ({ project }: ProjectDetailProps) => {
                       whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true }}
                       transition={{ delay: index * 0.1 }}
-                      className="text-gray-600 dark:text-gray-300 leading-relaxed"
+                      className="text-muted-foreground leading-relaxed"
                     >
                       {item}
                     </motion.li>
@@ -139,7 +149,7 @@ const ProjectDetail = ({ project }: ProjectDetailProps) => {
                   initial={{ opacity: 0 }}
                   whileInView={{ opacity: 1 }}
                   viewport={{ once: true }}
-                  className="text-gray-600 dark:text-gray-300 leading-relaxed"
+                  className="text-muted-foreground leading-relaxed"
                 >
                   {section.content}
                 </motion.p>

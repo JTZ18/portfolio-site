@@ -2,9 +2,12 @@
 
 import { ChevronRightIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import type { Project } from '@/types/project';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
+import { cn } from '@/lib/utils';
+import { PatternCard, PatternCardBody } from "@/components/ui/card-with-ellipsis-pattern";
+import { HeroPill } from '@/components/ui/hero-pill';
 
 type ProjectCardProps = {
   project: Project;
@@ -14,6 +17,7 @@ type ProjectCardProps = {
 const ProjectCard = ({ project }: ProjectCardProps) => {
   const { id, title, date, overview, techStack } = project;
   const cardRef = useRef<HTMLDivElement>(null);
+  const [isHovered, setIsHovered] = useState(false);
 
   const { scrollYProgress } = useScroll({
     target: cardRef,
@@ -24,86 +28,109 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
   const opacity = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0.3, 1, 1, 0.3]);
   const scale = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0.95, 1, 1, 0.95]);
 
+  // Format date to "Month Year"
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  };
+
   return (
     <motion.div
       ref={cardRef}
       style={{ opacity, scale, y }}
-      className="group"
+      className="group relative w-full"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
       <Link
         href={`/projects/${id}`}
-        className="block focus:outline-none focus:ring-2 focus:ring-blue-500/40 rounded-xl"
+        className={cn(
+          "block w-full focus-visible:outline-none focus-visible:ring-2",
+          "focus-visible:ring-ring rounded-lg"
+        )}
       >
-        <motion.article
-          whileHover={{ scale: 1.02, y: -4 }}
-          transition={{
-            duration: 0.2,
-            ease: "easeOut"
-          }}
-          className="relative bg-white/50 dark:bg-gray-800/50 hover:bg-white dark:hover:bg-gray-800 p-8 rounded-xl border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-sm shadow-sm hover:shadow-md"
-          aria-labelledby={`project-title-${id}`}
-        >
-          <header className="flex justify-between items-center mb-3">
-            <h3
-              id={`project-title-${id}`}
-              className="text-xl font-medium text-gray-800 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300"
-            >
-              {title}
-            </h3>
-            <motion.div
-              whileHover={{ x: 4 }}
-              transition={{ duration: 0.2 }}
-            >
-              <ChevronRightIcon
-                className="h-5 w-5 text-gray-400 dark:text-gray-500 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300"
-                aria-hidden="true"
-              />
-            </motion.div>
-          </header>
+        <AnimatePresence>
+          {isHovered && (
+            <motion.span
+              className="absolute inset-0 h-full w-full bg-neutral-200 dark:bg-slate-800/[0.8] block rounded-lg -m-1"
+              layoutId="hoverBackground"
+              initial={{ opacity: 0 }}
+              animate={{
+                opacity: 1,
+                transition: { duration: 0.15 },
+              }}
+              exit={{
+                opacity: 0,
+                transition: { duration: 0.15, delay: 0.2 },
+              }}
+            />
+          )}
+        </AnimatePresence>
+        <div className="relative z-10 w-full">
+          <PatternCard>
+            <PatternCardBody>
+              <div className="flex flex-col h-full">
+                <header className="flex justify-between items-center mb-3">
+                  <h3
+                    id={`project-title-${id}`}
+                    className={cn(
+                      "text-xl font-medium",
+                      "text-foreground",
+                      "transition-colors duration-200"
+                    )}
+                  >
+                    {title}
+                  </h3>
+                  <ChevronRightIcon
+                    className={cn(
+                      "h-5 w-5",
+                      "text-muted-foreground/50",
+                      "group-hover:translate-x-0.5",
+                      "transition-all duration-300"
+                    )}
+                    aria-hidden="true"
+                  />
+                </header>
 
-          <time
-            dateTime={date}
-            className="text-sm text-gray-500 dark:text-gray-400 mb-4 block"
-          >
-            {date}
-          </time>
+                <time
+                  dateTime={date}
+                  className="text-sm text-muted-foreground mb-4 block"
+                >
+                  {formatDate(date)}
+                </time>
 
-          <p className="text-gray-600 dark:text-gray-300 text-base leading-relaxed line-clamp-2 mb-6">
-            {overview}
-          </p>
+                <p className={cn(
+                  "text-muted-foreground text-base leading-relaxed",
+                  "line-clamp-2 mb-4"
+                )}>
+                  {overview}
+                </p>
 
-          <div
-            className="flex flex-wrap gap-2"
-            role="list"
-          >
-            {techStack.slice(0, 3).map((tech, techIndex) => (
-              <motion.span
-                key={techIndex}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{
-                  delay: techIndex * 0.05,
-                  duration: 0.2
-                }}
-                whileHover={{ scale: 1.05 }}
-                role="listitem"
-                className="px-3 py-1 bg-gray-100/50 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 rounded-full text-sm border border-gray-200/50 dark:border-gray-600/50 backdrop-blur-sm"
-              >
-                {tech}
-              </motion.span>
-            ))}
-            {techStack.length > 3 && (
-              <motion.span
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.2 }}
-                className="px-3 py-1 text-gray-400 dark:text-gray-500 text-sm"
-              >
-                +{techStack.length - 3} more
-              </motion.span>
-            )}
-          </div>
-        </motion.article>
+                <div
+                  className="flex flex-wrap gap-1.5 mt-auto"
+                  role="list"
+                >
+                  {techStack.slice(0, 5).map((tech, techIndex) => (
+                    <HeroPill
+                      key={techIndex}
+                      text={tech}
+                      className="mb-0 !p-0"
+                      animate={false}
+                      role="listitem"
+                    />
+                  ))}
+                  {techStack.length > 5 && (
+                    <HeroPill
+                      text={`+${techStack.length - 5} more`}
+                      className="mb-0 !p-0"
+                      animate={false}
+                    />
+                  )}
+                </div>
+              </div>
+            </PatternCardBody>
+          </PatternCard>
+        </div>
       </Link>
     </motion.div>
   );

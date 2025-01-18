@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, AnimatePresence } from 'framer-motion';
+import { Badge } from "@/components/ui/badge";
 import ProjectCard from './ProjectCard';
 import type { Project } from '@/types/project';
 
@@ -8,46 +8,36 @@ type ProjectListProps = {
   projects: Project[];
 };
 
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.15,
-      delayChildren: 0.2
-    }
-  }
-};
-
 const ProjectList = ({ projects }: ProjectListProps) => {
+  // Sort projects by date (most recent first)
+  const sortedProjects = [...projects].sort((a, b) => {
+    return new Date(b.date).getTime() - new Date(a.date).getTime();
+  });
+
   return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        variants={container}
-        initial="hidden"
-        animate="show"
-        className="grid grid-cols-1 gap-6 sm:gap-8"
-      >
-        {projects.map((project, index) => (
-          <motion.div
-            key={project.id}
-            initial={{ opacity: 0, y: 100 }}
-            whileInView={{
-              opacity: 1,
-              y: 0,
-              transition: {
-                duration: 0.5,
-                ease: [0.21, 1.02, 0.73, 0.96],
-                delay: index * 0.1
-              }
-            }}
-            viewport={{ once: true, margin: "-50px" }}
-          >
+    <div className="flex flex-col gap-10">
+      <div className="flex gap-4 flex-col items-start">
+        <div>
+          <Badge>Portfolio</Badge>
+        </div>
+        <div className="flex gap-2 flex-col">
+          <h2 className="text-3xl md:text-5xl tracking-tighter max-w-xl font-regular text-left">
+            My Projects
+          </h2>
+          <p className="text-lg max-w-xl lg:max-w-lg leading-relaxed tracking-tight text-muted-foreground text-left">
+            A collection of my work in AI, machine learning, and software development.
+          </p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-1 gap-8">
+        {sortedProjects.map((project, index) => (
+          <div key={project.id}>
             <ProjectCard project={project} index={index} />
-          </motion.div>
+          </div>
         ))}
-      </motion.div>
-    </AnimatePresence>
+      </div>
+    </div>
   );
 };
 
