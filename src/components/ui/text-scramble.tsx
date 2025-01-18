@@ -1,16 +1,16 @@
 'use client';
-import { type JSX, useEffect, useState } from 'react';
+import { type JSX, useEffect, useState, useCallback } from 'react';
 import { motion, MotionProps } from 'framer-motion';
 
 type TextScrambleProps = {
   children: string;
   duration?: number;
   speed?: number;
-  delay?: number;
   characterSet?: string;
   as?: React.ElementType;
   className?: string;
   trigger?: boolean;
+  delay?: number;
   onScrambleComplete?: () => void;
 } & MotionProps;
 
@@ -21,11 +21,11 @@ export function TextScramble({
   children,
   duration = 0.8,
   speed = 0.04,
-  delay = 0,
   characterSet = defaultChars,
   className,
   as: Component = 'p',
   trigger = true,
+  delay = 0,
   onScrambleComplete,
   ...props
 }: TextScrambleProps) {
@@ -36,10 +36,11 @@ export function TextScramble({
   const [isAnimating, setIsAnimating] = useState(false);
   const text = children;
 
-  const scramble = async () => {
+  const scramble = useCallback(async () => {
     if (isAnimating) return;
     setIsAnimating(true);
 
+    // Wait for initial delay
     await new Promise(resolve => setTimeout(resolve, delay * 1000));
 
     const steps = duration / speed;
@@ -73,13 +74,12 @@ export function TextScramble({
         onScrambleComplete?.();
       }
     }, speed * 1000);
-  };
+  }, [text, duration, speed, characterSet, delay, isAnimating, onScrambleComplete]);
 
   useEffect(() => {
     if (!trigger) return;
-
     scramble();
-  }, [trigger]);
+  }, [trigger, scramble]);
 
   return (
     <MotionComponent className={className} {...props}>

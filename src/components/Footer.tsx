@@ -1,5 +1,3 @@
-import { cn } from '@/lib/utils';
-
 const Footer = () => {
   return (
     <footer className="border-t border-border/5 bg-background">
